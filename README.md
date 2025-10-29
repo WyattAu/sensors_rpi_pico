@@ -1,4 +1,5 @@
 This repository contains source code
+
 The aim of this source code is to from the raspberry pico 2
 - read temperature from the TMP117
 - read magnetic strength in the x, y and z axis from the CMPS12
