@@ -1,6 +1,6 @@
-This repository contains source code
+This repository contains source code to be compiled and run on a raspberry pico 2
 
-The aim of this source code is to from the raspberry pico 2
+The aim of this source code is to
 - read temperature from the TMP117
 - read magnetic strength in the x, y and z axis from the CMPS12
 - read UVA, UVB, UVcomp1, and UVcomp intensity from the VEML6075
