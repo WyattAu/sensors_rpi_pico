@@ -8,6 +8,11 @@ The aim of this source code is to
 - read humitidy from the DollaTek humidity sensor
 - save the measurements to the SD card
 - Repeat several times
+Upload Any Code Here Related to the following things above
+
+![sensor_subdivision](https://github.com/user-attachments/assets/60aeb2ed-6e5f-4fe3-92c4-a83734b6f7ad)
+
+
 Hardware:
 - TMP117 sensor
 - CMPS12 sensor
@@ -16,3 +21,4 @@ Hardware:
 - DollaTek humidity sensor
 - SD card module
 - Raspberry Pi Pico 2
+
