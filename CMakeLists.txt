@@ -27,6 +27,7 @@ set(PICO_BOARD pico2 CACHE STRING "Board type")
 
 # Pull in Raspberry Pi Pico SDK (must be before project)
 include(pico_sdk_import.cmake)
+include("lib/pimoroni-pico/examples/breakout_icp10125/basic_demo.cmake")
 
 project(sensors_rpi_pico C CXX ASM)
 
@@ -41,6 +42,7 @@ include_directories(lib/Pico-TMP117-Library/src)
 add_executable(
     sensors_rpi_pico main.c 
     lib/Pico-TMP117-Library/src/tmp117.c
+    basic_demo.cpp
     )
 
 pico_set_program_name(sensors_rpi_pico "sensors_rpi_pico")
@@ -59,6 +61,7 @@ target_include_directories(sensors_rpi_pico PRIVATE
 target_link_libraries(sensors_rpi_pico
         pico_stdlib
         hardware_i2c
+        icp10125
         )
 
 pico_add_extra_outputs(sensors_rpi_pico)
