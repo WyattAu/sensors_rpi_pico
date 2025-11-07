@@ -1,3 +1,37 @@
+// temp_result.c
+/**
+ * Copyright (c) 2024 breaker
+ * Based on code from:
+ * - Raspberry Pi Pico SDK (c) 2020 Raspberry Pi (Trading) Ltd. (BSD-3-Clause License)
+ * - SparkFun TMP117 Arduino Library (c) 2016 SparkFun Electronics (originally MIT, relicensed BSD-3-Clause)
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+// Original SparkFun TMP117 Arduino Library file: Example1_BasicReadings.ino
+
+/* Notes for this new version using the Raspberry Pi Pico/RP2040:
+*
+* This program will print the temperature in Celsius by casting the raw temperature
+* result register to an integer, then scale the Q7 formatted data to two decimal places
+* 
+* See TI Application Note: How to Read and Interpret Digital Temperature Sensor Output Data
+* "Modern sensors, such as the TMP117, offer a full 16 bits of resolution in a Q7 format."
+*
+* The 16-bit Word of the temp_result register consists of;
+* bit 15: sign bit, [14:7] Integer bits, "decimal point", [6:0] Fractional bits
+*
+* Please see Table 7-7. (Conversion Cycle Time in CC Mode) note: CC = Continuous Conversion
+* The factory default Conversion Cycle time is 1 second using 8 averaged conversions,
+* therefore this example sets the wait for conversion to 1000 ms.
+*
+* NOTE: Possible i2C addresses for TMP117 (0x48, 0x49, 0x4A, 0x4B)
+* Library assumes the address is 0x48 unless set_address function is used
+*
+* - Reading the configuration register clears the High Alert and Low Alert flags
+* - Reading the configuration or temperature result registers clears the Data Ready flag.
+*/
+
 #include "tmp117.h"
 #include "tmp117_registers.h"
 #include "pico/stdlib.h"

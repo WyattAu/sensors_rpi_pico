@@ -28,7 +28,7 @@ set(PICO_BOARD pico2 CACHE STRING "Board type")
 # Pull in Raspberry Pi Pico SDK (must be before project)
 include(pico_sdk_import.cmake)
 
-project(just-sensors C CXX ASM)
+project(sensors_rpi_pico C CXX ASM)
 
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
@@ -39,31 +39,27 @@ include_directories(lib/Pico-TMP117-Library/src)
 # Add executable. Default name is the project name, version 0.1
 
 add_executable(
-    just-sensors just-sensors.c 
+    sensors_rpi_pico main.c 
     lib/Pico-TMP117-Library/src/tmp117.c
     )
 
-pico_set_program_name(just-sensors "just-sensors")
-pico_set_program_version(just-sensors "0.1")
+pico_set_program_name(sensors_rpi_pico "sensors_rpi_pico")
+pico_set_program_version(sensors_rpi_pico "0.1")
 
 # Modify the below lines to enable/disable output over UART/USB
-pico_enable_stdio_uart(just-sensors 0)
-pico_enable_stdio_usb(just-sensors 1)
-
-# Add the standard library to the build
-target_link_libraries(just-sensors
-        pico_stdlib)
+pico_enable_stdio_uart(sensors_rpi_pico 0)
+pico_enable_stdio_usb(sensors_rpi_pico 1)
 
 # Add the standard include files to the build
-target_include_directories(just-sensors PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}
+target_include_directories(sensors_rpi_pico PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/lib/Pico-TMP117-Library/src
 )
 
 # Add any user requested libraries
-target_link_libraries(just-sensors 
+target_link_libraries(sensors_rpi_pico
         pico_stdlib
         hardware_i2c
         )
 
-pico_add_extra_outputs(just-sensors)
+pico_add_extra_outputs(sensors_rpi_pico)
 
