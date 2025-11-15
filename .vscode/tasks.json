@@ -1,102 +1,243 @@
 {
     "version": "2.0.0",
+    "inputs": [
+        {
+            "id": "buildType",
+            "type": "pickString",
+            "description": "Select build type and compiler/platform",
+            "options": [
+                {"label": "Release (Default)", "value": "default"},
+                {"label": "Release (Linux GCC)", "value": "linux-gcc"},
+                {"label": "Release (Linux Clang)", "value": "linux-clang"},
+                {"label": "Release (MSYS2 GCC)", "value": "msys2-gcc"},
+                {"label": "Release (MSYS2 Clang)", "value": "msys2-clang"},
+                {"label": "Release (MSVC Clang-CL)", "value": "msvc-clang-cl"},
+                {"label": "Debug (Default)", "value": "debug"},
+                {"label": "Reproducible (Default)", "value": "reproducible"},
+                {"label": "Host Tests (Default)", "value": "host-tests"}
+            ]
+        },
+        {
+            "id": "buildOptions",
+            "type": "pickString",
+            "description": "Select build options",
+            "options": [
+                {"label": "Full Build", "value": ""},
+                {"label": "Clean Build", "value": "--clean"},
+                {"label": "Package Only", "value": "--package-only"},
+                {"label": "Run Tests", "value": "--run-tests"},
+                {"label": "Run Coverage", "value": "--run-coverage"}
+            ]
+        }
+    ],
     "tasks": [
         {
-            "label": "Compile Project",
+            "label": "Build Project",
             "type": "process",
-            "isBuildCommand": true,
-            "command": "${userHome}/.pico-sdk/ninja/v1.12.1/ninja",
-            "args": ["-C", "${workspaceFolder}/build"],
+            "command": "python",
+            "args": [
+                "${workspaceFolder}/build.py",
+                "--preset",
+                "${input:buildType}",
+                "${input:buildOptions}"
+            ],
             "group": "build",
             "presentation": {
                 "reveal": "always",
                 "panel": "dedicated"
             },
-            "problemMatcher": "$gcc",
-            "windows": {
-                "command": "${env:USERPROFILE}/.pico-sdk/ninja/v1.12.1/ninja.exe"
-            }
+            "problemMatcher": []
         },
         {
-            "label": "Run Project",
+            "label": "Build Default",
             "type": "process",
-            "command": "${env:HOME}/.pico-sdk/picotool/2.2.0-a4/picotool/picotool",
+            "command": "python",
             "args": [
-                "load",
-                "${command:raspberry-pi-pico.launchTargetPath}",
-                "-fx"
+                "${workspaceFolder}/build.py",
+                "--preset",
+                "default"
             ],
+            "group": "build",
             "presentation": {
                 "reveal": "always",
                 "panel": "dedicated"
             },
-            "problemMatcher": [],
-            "windows": {
-                "command": "${env:USERPROFILE}/.pico-sdk/picotool/2.2.0-a4/picotool/picotool.exe"
-            }
+            "problemMatcher": []
         },
         {
-            "label": "Flash",
+            "label": "Build Debug",
             "type": "process",
-            "command": "${userHome}/.pico-sdk/openocd/0.12.0+dev/openocd.exe",
+            "command": "python",
             "args": [
-                "-s",
-                "${userHome}/.pico-sdk/openocd/0.12.0+dev/scripts",
-                "-f",
-                "interface/cmsis-dap.cfg",
-                "-f",
-                "target/${command:raspberry-pi-pico.getTarget}.cfg",
-                "-c",
-                "adapter speed 5000; program \"${command:raspberry-pi-pico.launchTargetPath}\" verify reset exit"
+                "${workspaceFolder}/build.py",
+                "--preset",
+                "debug"
             ],
-            "problemMatcher": [],
-            "windows": {
-                "command": "${env:USERPROFILE}/.pico-sdk/openocd/0.12.0+dev/openocd.exe",
-            }
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "problemMatcher": []
         },
         {
-            "label": "Rescue Reset",
+            "label": "Build Release",
             "type": "process",
-            "command": "${userHome}/.pico-sdk/openocd/0.12.0+dev/openocd.exe",
+            "command": "python",
             "args": [
-                "-s",
-                "${userHome}/.pico-sdk/openocd/0.12.0+dev/scripts",
-                "-f",
-                "interface/cmsis-dap.cfg",
-                "-f",
-                "target/${command:raspberry-pi-pico.getChip}-rescue.cfg",
-                "-c",
-                "adapter speed 5000; reset halt; exit"
+                "${workspaceFolder}/build.py",
+                "--preset",
+                "release"
             ],
-            "problemMatcher": [],
-            "windows": {
-                "command": "${env:USERPROFILE}/.pico-sdk/openocd/0.12.0+dev/openocd.exe",
-            }
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "problemMatcher": []
         },
         {
-            "label": "RISC-V Reset (RP2350)",
+            "label": "Build GCC",
             "type": "process",
-            "command": "${userHome}/.pico-sdk/openocd/0.12.0+dev/openocd.exe",
+            "command": "python",
             "args": [
-                "-s",
-                "${userHome}/.pico-sdk/openocd/0.12.0+dev/scripts",
-                "-c",
-                "set USE_CORE { rv0 rv1 cm0 cm1 }",
-                "-f",
-                "interface/cmsis-dap.cfg",
-                "-f",
-                "target/rp2350.cfg",
-                "-c",
-                "adapter speed 5000; init;",
-                "-c",
-                "write_memory 0x40120158 8 { 0x3 }; echo [format \"Info : ARCHSEL 0x%02x\" [read_memory 0x40120158 8 1]];",
-                "-c",
-                "reset halt; targets rp2350.rv0; echo [format \"Info : ARCHSEL_STATUS 0x%02x\" [read_memory 0x4012015C 8 1]]; exit"
+                "${workspaceFolder}/build.py",
+                "--preset",
+                "msys2-gcc"
             ],
-            "problemMatcher": [],
-            "windows": {
-                "command": "${env:USERPROFILE}/.pico-sdk/openocd/0.12.0+dev/openocd.exe",
-            }
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Build Linux GCC",
+            "type": "process",
+            "command": "python",
+            "args": [
+                "${workspaceFolder}/build.py",
+                "--preset",
+                "linux-gcc"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Build Linux Clang",
+            "type": "process",
+            "command": "python",
+            "args": [
+                "${workspaceFolder}/build.py",
+                "--preset",
+                "linux-clang"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Build Clang",
+            "type": "process",
+            "command": "python",
+            "args": [
+                "${workspaceFolder}/build.py",
+                "--preset",
+                "msys2-clang"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Build MSVC",
+            "type": "process",
+            "command": "python",
+            "args": [
+                "${workspaceFolder}/build.py",
+                "--preset",
+                "msvc-clang-cl"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Build Reproducible",
+            "type": "process",
+            "command": "python",
+            "args": [
+                "${workspaceFolder}/build.py",
+                "--preset",
+                "reproducible"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Configure Project",
+            "type": "process",
+            "command": "python",
+            "args": [
+                "${workspaceFolder}/build.py",
+                "--preset",
+                "${input:buildType}",
+                "--package-only"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Clean All",
+            "type": "process",
+            "command": "python",
+            "args": [
+                "${workspaceFolder}/build.py",
+                "--clean-all"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "List Presets",
+            "type": "process",
+            "command": "python",
+            "args": [
+                "${workspaceFolder}/build.py",
+                "--list-presets"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "problemMatcher": []
         }
     ]
 }

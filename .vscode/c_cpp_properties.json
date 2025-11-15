@@ -4,18 +4,31 @@
             "name": "Pico",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${userHome}/.pico-sdk/sdk/2.2.0/**"
+                "${workspaceFolder}/build/release/_deps/pico-sdk-src/src/common/pico_base_headers/include",
+                "${workspaceFolder}/build/release/_deps/pico-sdk-src/src/common/pico_stdlib_headers/include",
+                "${workspaceFolder}/build/release/_deps/pico-sdk-src/src/rp2_common/hardware_gpio/include",
+                "${workspaceFolder}/build/release/_deps/pico-sdk-src/src/boards/include",
+                "${workspaceFolder}/build/release/_deps/pico-sdk-src/src/rp2350/hardware_regs/include",
+                "${workspaceFolder}/build/release/_deps/pico-sdk-src/src/rp2_common/hardware_base/include",
+                "${workspaceFolder}/build/release/_deps/pico-sdk-src/src/common/hardware_claim/include",
+                "${workspaceFolder}/build/release/_deps/pico-sdk-src/src/rp2_common/hardware_i2c/include",
+                "${workspaceFolder}/build/release/generated/pico_base"
             ],
             "forcedInclude": [
-                "${workspaceFolder}/build/generated/pico_base/pico/config_autogen.h",
-                "${userHome}/.pico-sdk/sdk/2.2.0/src/common/pico_base_headers/include/pico.h"
+                "${workspaceFolder}/build/release/generated/pico_base/pico/config_autogen.h"
             ],
-            "defines": [],
-            "compilerPath": "${userHome}/.pico-sdk/toolchain/14_2_Rel1/bin/arm-none-eabi-gcc",
-            "compileCommands": "${workspaceFolder}/build/compile_commands.json",
-            "cStandard": "c17",
-            "cppStandard": "c++14",
-            "intelliSenseMode": "linux-gcc-arm"
+            "defines": [
+                "PICO_BOARD=\"pico2\"",
+                "PICO_BUILD=1",
+                "PICO_NO_FLASH=0",
+                "PICO_ON_DEVICE=1",
+                "PICO_RP2350=1"
+            ],
+            "compilerPath": "${workspaceFolder}/build/release/toolchain/arm-gnu-toolchain/bin/arm-none-eabi-gcc.exe",
+            "compileCommands": "${workspaceFolder}/build/release/compile_commands.json",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "windows-gcc-arm"
         }
     ],
     "version": 4

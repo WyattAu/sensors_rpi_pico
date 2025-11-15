@@ -7,8 +7,6 @@
 #include <stdint.h>
 #include <stdio.h>
 #include "cmps12.h"
-#include "lib/pimoroni-pico/common/pimoroni_common.hpp"
-#include "icp10125.hpp"
 
 // I2C Configuration
 #define I2C_PORT i2c0
@@ -24,11 +22,6 @@
 #define I2C_SCL PICO_DEFAULT_I2C_SCL_PIN  // Set to a different SCL pin as needed
 #define TMP117_OFFSET_VALUE -25.0f     // Temperature offset in degrees C (for testing)
 #define TMP117_CONVERSION_DELAY_MS 1000  // Adjust based on conversion cycle time
-
-using namespace pimoroni;
-
-I2C i2c(BOARD::BREAKOUT_GARDEN);
-ICP10125 icp10125(&i2c);
 
 int main(void) {
     // Initialize chosen interface
@@ -67,11 +60,8 @@ int main(void) {
         while (1) {
             tight_loop_contents();
         }
-
+    }
     printf("CMPS12 initialized successfully!\n\n");
-
-      icp10125.init();
-      printf("init()\n");
 
     while (1) {
         // Read compass data
@@ -115,9 +105,7 @@ int main(void) {
 
         // Floating point functions are also available for converting to Celsius or Fahrenheit
         //printf("\nTemperature: %.2f °C\t%.2f °F", read_temp_celsius(), read_temp_fahrenheit());
-    
-        auto result = icp10125.measure(ICP10125::NORMAL);
-        printf("%fc %fPa %d\n", result.temperature, result.pressure, result.status);
+
         sleep_ms(500);
     }
 

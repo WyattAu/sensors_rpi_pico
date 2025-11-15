@@ -1,0 +1,221 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 20,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+       "name": "default",
+       "displayName": "Default Configuration",
+       "description": "Default build configuration",
+       "binaryDir": "${sourceDir}/build/release/default",
+       "cacheVariables": {
+         "CMAKE_BUILD_TYPE": "Release"
+       }
+     },
+    {
+      "name": "linux-gcc",
+      "displayName": "Linux GCC",
+      "description": "Build with GCC on Linux",
+      "inherits": ["default"],
+      "binaryDir": "${sourceDir}/build/release/linux-gcc",
+      "generator": "Ninja",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
+      "name": "linux-clang",
+      "displayName": "Linux Clang",
+      "description": "Build with Clang on Linux",
+      "inherits": ["default"],
+      "binaryDir": "${sourceDir}/build/release/linux-clang",
+      "generator": "Ninja",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "cacheVariables": {
+        "USE_CLANG": "ON"
+      }
+    },
+    {
+      "name": "msys2-gcc",
+      "displayName": "MSYS2 GCC",
+      "description": "Build with GCC in MSYS2",
+      "inherits": ["default"],
+      "binaryDir": "${sourceDir}/build/release/msys2-gcc",
+      "generator": "Ninja",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "environment": {
+        "MSYSTEM": "MINGW64"
+      },
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/build/release/msys2-gcc/toolchain.cmake",
+        "USE_CUSTOM_TOOLCHAIN": "ON"
+      }
+    },
+    {
+      "name": "msys2-clang",
+      "displayName": "MSYS2 Clang",
+      "description": "Build with Clang in MSYS2",
+      "inherits": ["default"],
+      "binaryDir": "${sourceDir}/build/release/msys2-clang",
+      "generator": "Ninja",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "environment": {
+        "MSYSTEM": "MINGW64",
+        "PICO_CLANG_RUNTIMES": "arm-none-eabi"
+      },
+      "cacheVariables": {
+        "USE_CLANG": "ON",
+        "PICO_CLANG_RUNTIMES": "arm-none-eabi",
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/build/release/msys2-clang/toolchain.cmake",
+        "LIB_PICO_FLOAT_PICO_VFP": "OFF"
+      }
+    },
+    {
+      "name": "msvc-clang-cl",
+      "displayName": "MSVC Clang-CL",
+      "description": "Build with Clang-CL on Windows",
+      "inherits": ["default"],
+      "binaryDir": "${sourceDir}/build/release/msvc-clang-cl",
+      "generator": "Ninja",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "cacheVariables": {
+        "USE_CLANG": "ON",
+        "PICO_CLANG_RUNTIMES": "arm-none-eabi",
+        "CMAKE_MAKE_PROGRAM": "ninja.exe"
+      }
+    },
+    {
+      "name": "debug",
+      "displayName": "Debug Build",
+      "description": "Debug build configuration",
+      "inherits": ["default"],
+      "binaryDir": "${sourceDir}/build/debug/default",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "release",
+      "displayName": "Release Build",
+      "description": "Release build configuration",
+      "inherits": ["default"],
+      "binaryDir": "${sourceDir}/build/release/default",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "reproducible",
+      "displayName": "Reproducible Build",
+      "description": "Deterministic build for reproducible results",
+      "inherits": ["release"],
+      "binaryDir": "${sourceDir}/build/release/reproducible",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      },
+      "environment": {
+        "SOURCE_DATE_EPOCH": "1609459200"
+      }
+    },
+    {
+      "name": "host-test-config",
+      "displayName": "Host Unit Tests",
+      "description": "Configuration for running unit tests on host machine",
+      "binaryDir": "${sourceDir}/build/debug/host-tests",
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "BUILD_TESTS": "ON"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "default",
+      "configurePreset": "default"
+    },
+    {
+      "name": "linux-gcc",
+      "configurePreset": "linux-gcc"
+    },
+    {
+      "name": "linux-clang",
+      "configurePreset": "linux-clang"
+    },
+    {
+      "name": "msys2-gcc",
+      "configurePreset": "msys2-gcc"
+    },
+    {
+      "name": "msys2-clang",
+      "configurePreset": "msys2-clang"
+    },
+    {
+      "name": "msvc-clang-cl",
+      "configurePreset": "msvc-clang-cl"
+    },
+    {
+      "name": "debug",
+      "configurePreset": "debug"
+    },
+    {
+      "name": "release",
+      "configurePreset": "release"
+    },
+    {
+      "name": "reproducible",
+      "configurePreset": "reproducible"
+    },
+    {
+      "name": "host-tests",
+      "configurePreset": "host-test-config"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "default",
+      "configurePreset": "default",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": true
+      }
+    },
+    {
+      "name": "host-tests",
+      "configurePreset": "host-test-config",
+      "output": {
+        "outputOnFailure": true,
+        "verbosity": "verbose"
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": false,
+        "timeout": 60
+      }
+    }
+  ]
+}

@@ -1,5 +1,11 @@
 #include "cmps12.h"
+
+#ifndef HOST_TESTING
 #include "pico/stdlib.h"
+#endif
+
+#include <stdint.h>
+#include <stdbool.h>
 #include <string.h>
 
 // Initialize the CMPS12 compass
