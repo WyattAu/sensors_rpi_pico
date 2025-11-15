@@ -1,25 +1,9 @@
 #!/usr/bin/env python3
 """
 Apache 2.0, Wyatt Au
+Build script modified from omniCppController.py for Raspberry Pi Pico sensors project.
 
-Modified build script from my omniCppController.py, should be able to complete the following:
-1. Parses CMakePresets.json to detect available configurations
-2. Allows preset selection via command line arguments
-3. Runs full build pipeline: CMake configure → Build → Package
-4. Supports both release and debug builds with appropriate packaging
-5. Can be called from VS Code tasks.json and launch.json
-
-Usage:
-      python build.py [--preset PRESET] [--clean] [--clean-all] [--package-only] [--run-tests] [--run-coverage] [--verbose]
-
-Arguments:
-     --preset PRESET    CMake preset to use (default: release)
-     --clean           Clean build directory before building
-     --package-only    Only create packages from existing build
-     --run-tests       Run unit tests after building
-     --run-coverage    Run code coverage analysis (implies --run-tests)
-     --verbose         Enable verbose logging
-     --help           Show this help message
+Usage: python build.py [--preset PRESET] [--clean] [--clean-all] [--package-only] [--run-tests] [--run-coverage] [--verbose]
 """
 
 import argparse
@@ -39,7 +23,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 
 class BuildScript:
-    """Main build script class for Raspberry Pi Pico sensors project."""
+    """Build script for Raspberry Pi Pico sensors project."""
 
     def __init__(self, verbose: bool = False):
         self.verbose = verbose
@@ -136,7 +120,7 @@ class BuildScript:
         return None
 
     def setup_gcc_toolchain(self, build_dir: Path) -> Optional[Path]:
-        """Setup ARM GCC toolchain for Windows - download if not found."""
+        """Setup ARM GCC toolchain for Windows."""
         if platform.system() != "Windows":
             return None
 
@@ -150,25 +134,21 @@ class BuildScript:
 
         toolchain_dir.mkdir(parents=True, exist_ok=True)
 
-        # ARM GNU Toolchain for Windows
         toolchain_version = "14.3.rel1"
         toolchain_url = f"https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu/{toolchain_version}/binrel/arm-gnu-toolchain-{toolchain_version}-mingw-w64-i686-arm-none-eabi.zip"
         toolchain_archive = toolchain_dir / "arm-gnu-toolchain.zip"
 
-        self.logger.info(f"Downloading ARM GNU Toolchain {toolchain_version}...")
+        self.logger.info(f"Downloading ARM GNU Toolchain {toolchain_version}")
         if not self.download_file(toolchain_url, toolchain_archive):
             return None
 
         if not self.extract_archive(toolchain_archive, toolchain_dir):
             return None
 
-        # The toolchain may extract to a directory like "arm-gnu-toolchain-14.3.rel1-mingw-w64-i686-arm-none-eabi"
-        # or directly to the toolchain_dir
         extracted_dirs = list(toolchain_dir.glob("arm-gnu-toolchain-*"))
 
         if extracted_dirs:
             extracted_dir = extracted_dirs[0]
-            # Move contents to toolchain/arm-gnu-toolchain
             for item in extracted_dir.iterdir():
                 shutil.move(str(item), str(toolchain_dir / item.name))
             extracted_dir.rmdir()
@@ -181,14 +161,13 @@ class BuildScript:
         return toolchain_dir
 
     def setup_clang_toolchain(self, build_dir: Path, use_embedded_toolchain: bool = False) -> Optional[Path]:
-        """Setup Clang toolchain - use embedded if requested, else check MSYS2, then PATH, download if not found."""
+        """Setup Clang toolchain."""
         if platform.system() != "Windows":
             return None
 
         if use_embedded_toolchain:
-            # Use LLVM Embedded Toolchain for Arm (includes llvm-objcopy and ARM runtime libraries)
             toolchain_name = "embedded-clang"
-            self.logger.info(f"Using LLVM Embedded Toolchain for Arm...")
+            self.logger.info("Using LLVM Embedded Toolchain for Arm")
             toolchain_dir = build_dir / "toolchain" / toolchain_name
             clang_exe_path = toolchain_dir / "bin" / "clang.exe"
 
@@ -202,21 +181,19 @@ class BuildScript:
             embedded_url = f"https://github.com/ARM-software/LLVM-embedded-toolchain-for-Arm/releases/download/release-{embedded_version}/LLVM-ET-Arm-{embedded_version}-Windows-x86_64.zip"
             embedded_archive = toolchain_dir / "llvm-embedded.zip"
 
-            self.logger.info(f"Downloading LLVM Embedded Toolchain for Arm {embedded_version}...")
+            self.logger.info(f"Downloading LLVM Embedded Toolchain for Arm {embedded_version}")
             if not self.download_file(embedded_url, embedded_archive):
                 return None
 
             if not self.extract_archive(embedded_archive, toolchain_dir):
                 return None
 
-            # The embedded toolchain extracts to a directory like "LLVMEmbeddedToolchainForArm-18.1.3" or "LLVM-ET-Arm-19.1.5-Windows-x86_64"
             extracted_dirs = list(toolchain_dir.glob("LLVMEmbeddedToolchainForArm-*")) + list(toolchain_dir.glob("LLVM-ET-Arm-*"))
             if not extracted_dirs:
                 self.logger.error("Failed to find extracted LLVM Embedded Toolchain directory")
                 return None
 
             embedded_dir = extracted_dirs[0]
-            # Move contents to toolchain/embedded-clang
             for item in embedded_dir.iterdir():
                 shutil.move(str(item), str(toolchain_dir / item.name))
             embedded_dir.rmdir()

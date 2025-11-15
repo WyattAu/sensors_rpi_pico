@@ -21,12 +21,7 @@
       "description": "Build with GCC on Linux",
       "inherits": ["default"],
       "binaryDir": "${sourceDir}/build/release/linux-gcc",
-      "generator": "Ninja",
-      "condition": {
-        "type": "equals",
-        "lhs": "${hostSystemName}",
-        "rhs": "Linux"
-      }
+      "generator": "Ninja"
     },
     {
       "name": "linux-clang",

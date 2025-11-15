@@ -1,0 +1,35 @@
+{
+    "name": "Pico Sensors Dev Container",
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "devcontainer",
+    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+    "shutdownAction": "stopCompose",
+
+    // Configure tool-specific properties.
+    "customizations": {
+        // Configure properties specific to VS Code.
+        "vscode": {
+            // Add the IDs of extensions you want installed when the container is created.
+            "extensions": [
+                "ms-vscode.cmake-tools",
+                "ms-vscode.cpptools",
+                "ms-vscode.cpptools-extension-pack"
+            ],
+            "settings": {
+                "cmake.configureOnOpen": true,
+                "cmake.generator": "Ninja",
+                "cmake.buildDirectory": "${workspaceFolder}/build/linux-gcc",
+                "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools"
+            }
+        }
+    },
+
+    // Use 'forwardPorts' to make a list of ports inside the container available locally.
+    // "forwardPorts": [],
+
+    // Use 'postCreateCommand' to run commands after the container is created.
+    "postCreateCommand": "echo 'Dev container for Pico Sensors project is ready!'",
+
+    // Comment out to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+    "remoteUser": "vscode"
+}
